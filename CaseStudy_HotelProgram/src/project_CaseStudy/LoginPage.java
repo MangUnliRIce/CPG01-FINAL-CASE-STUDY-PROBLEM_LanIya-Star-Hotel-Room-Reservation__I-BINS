@@ -39,7 +39,7 @@ public class LoginPage extends JFrame {
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }//Upload
+                }
             }
         });
     }
