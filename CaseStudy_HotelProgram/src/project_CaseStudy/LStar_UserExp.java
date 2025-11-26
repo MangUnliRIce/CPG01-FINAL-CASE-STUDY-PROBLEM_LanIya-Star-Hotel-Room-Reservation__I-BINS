@@ -46,11 +46,13 @@ public class LStar_UserExp extends JFrame {
     private JComboBox<String> RoomtypeList;
     private JSpinner CheckinDate;
     private JSpinner CheckoutDate;
-    private JTextField textField;
+    private JTextField roomNum;
     private JTextField textField_1;
     private JTextField textField_2;
     private JTextField textField_3;
     private JTextField textField_4;
+    private JTextField adultNum;
+    private JTextField childNum;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -108,30 +110,32 @@ public class LStar_UserExp extends JFrame {
         numRooms.add(DestinationList);
 
         // --- Check In Date ---
-        JLabel CheckInHeader = new JLabel("Check-in-Date:");
+        JLabel CheckInHeader = new JLabel("Check-in-Date: (YYYY-MM-DD)");
+        CheckInHeader.setHorizontalAlignment(SwingConstants.LEFT);
         CheckInHeader.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
-        CheckInHeader.setBounds(242, 39, 78, 13);
+        CheckInHeader.setBounds(290, 39, 177, 13);
         numRooms.add(CheckInHeader);
 
         CheckinDate = new JSpinner(new SpinnerDateModel());
         CheckinDate.setFont(new Font("Tahoma", Font.PLAIN, 10));
         JSpinner.DateEditor de_CheckinDate = new JSpinner.DateEditor(CheckinDate, "yyyy-MM-dd");
         CheckinDate.setEditor(de_CheckinDate);
-        CheckinDate.setBounds(338, 36, 147, 20);
+        CheckinDate.setBounds(477, 36, 147, 20);
         CheckinDate.setValue(new Date()); // Set to today
         numRooms.add(CheckinDate);
 
         // --- Check Out Date ---
-        JLabel CheckOutHeader = new JLabel("Check-out-Date:");
+        JLabel CheckOutHeader = new JLabel("Check-out-Date: (YYYY-MM-DD)");
+        CheckOutHeader.setHorizontalAlignment(SwingConstants.LEFT);
         CheckOutHeader.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
-        CheckOutHeader.setBounds(242, 65, 93, 13);
+        CheckOutHeader.setBounds(290, 65, 177, 13);
         numRooms.add(CheckOutHeader);
 
         CheckoutDate = new JSpinner(new SpinnerDateModel());
         CheckoutDate.setFont(new Font("Tahoma", Font.PLAIN, 10));
         JSpinner.DateEditor de_CheckoutDate = new JSpinner.DateEditor(CheckoutDate, "yyyy-MM-dd");
         CheckoutDate.setEditor(de_CheckoutDate);
-        CheckoutDate.setBounds(338, 61, 147, 21);
+        CheckoutDate.setBounds(477, 61, 147, 21);
         // Default checkout to tomorrow
         CheckoutDate.setValue(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24))); 
         numRooms.add(CheckoutDate);
@@ -165,11 +169,11 @@ public class LStar_UserExp extends JFrame {
         NumberRooms.setBounds(20, 92, 105, 13);
         numRooms.add(NumberRooms);
         
-        textField = new JTextField();
-        textField.setText("1");
-        textField.setBounds(85, 88, 147, 18);
-        numRooms.add(textField);
-        textField.setColumns(10);
+        roomNum = new JTextField();
+        roomNum.setText("1");
+        roomNum.setBounds(85, 88, 147, 18);
+        numRooms.add(roomNum);
+        roomNum.setColumns(10);
         
         JLabel Header2 = new JLabel("---- ADD-ONS -----------------------------------------------------------------------------------------------------------------------------------------------");
         Header2.setForeground(SystemColor.textHighlight);
@@ -203,14 +207,6 @@ public class LStar_UserExp extends JFrame {
                 submitBtn.setBackground(new Color(100, 149, 237));
                 submitBtn.setBounds(10, 470, 970, 20);
                 numRooms.add(submitBtn);
-                
-                JComboBox comboBox = new JComboBox();
-                comboBox.setBounds(583, 61, 147, 20);
-                numRooms.add(comboBox);
-                
-                JComboBox comboBox_1 = new JComboBox();
-                comboBox_1.setBounds(583, 35, 147, 20);
-                numRooms.add(comboBox_1);
                 
                 textField_1 = new JTextField();
                 textField_1.setBounds(95, 399, 147, 18);
@@ -261,6 +257,96 @@ public class LStar_UserExp extends JFrame {
                 Addon3.setBackground(new Color(255, 215, 0));
                 Addon3.setBounds(33, 315, 92, 20);
                 numRooms.add(Addon3);
+                
+                JLabel childNumHeader = new JLabel("No. of Children:");
+                childNumHeader.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
+                childNumHeader.setBounds(652, 39, 78, 13);
+                numRooms.add(childNumHeader);
+                
+                JLabel adultNumHeader = new JLabel("No. of Adults:");
+                adultNumHeader.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
+                adultNumHeader.setBounds(652, 65, 78, 13);
+                numRooms.add(adultNumHeader);
+                
+                adultNum = new JTextField();
+                adultNum.setBounds(740, 62, 147, 18);
+                numRooms.add(adultNum);
+                adultNum.setColumns(10);
+                
+                childNum = new JTextField();
+                childNum.setColumns(10);
+                childNum.setBounds(740, 39, 147, 18);
+                numRooms.add(childNum);
+                
+                JLabel lblleaveBlankIf = new JLabel("(Leave blank if not applicable)");
+                lblleaveBlankIf.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 15));
+                lblleaveBlankIf.setBounds(740, 106, 240, 13);
+                numRooms.add(lblleaveBlankIf);
+                
+                JSpinner spinner = new JSpinner();
+                spinner.setBounds(126, 246, 116, 20);
+                numRooms.add(spinner);
+                
+                JSpinner spinner_1 = new JSpinner();
+                spinner_1.setBounds(126, 281, 116, 20);
+                numRooms.add(spinner_1);
+                
+                JSpinner spinner_2 = new JSpinner();
+                spinner_2.setBounds(126, 316, 116, 20);
+                numRooms.add(spinner_2);
+                
+                JCheckBox chckbxNewCheckBox = new JCheckBox("New check box");
+                chckbxNewCheckBox.setBounds(33, 140, 116, 20);
+                numRooms.add(chckbxNewCheckBox);
+                
+                JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
+                chckbxNewCheckBox_1.setBounds(33, 166, 116, 20);
+                numRooms.add(chckbxNewCheckBox_1);
+                
+                JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
+                chckbxNewCheckBox_2.setBounds(33, 194, 116, 20);
+                numRooms.add(chckbxNewCheckBox_2);
+                
+                JSpinner spinner_3 = new JSpinner();
+                spinner_3.setBounds(187, 141, 116, 20);
+                numRooms.add(spinner_3);
+                
+                JSpinner spinner_4 = new JSpinner();
+                spinner_4.setBounds(187, 167, 116, 20);
+                numRooms.add(spinner_4);
+                
+                JSpinner spinner_5 = new JSpinner();
+                spinner_5.setBounds(187, 195, 116, 20);
+                numRooms.add(spinner_5);
+                
+                JSpinner spinner_3_1 = new JSpinner();
+                spinner_3_1.setBounds(369, 141, 116, 20);
+                numRooms.add(spinner_3_1);
+                
+                JSpinner spinner_3_2 = new JSpinner();
+                spinner_3_2.setBounds(369, 167, 116, 20);
+                numRooms.add(spinner_3_2);
+                
+                JSpinner spinner_3_3 = new JSpinner();
+                spinner_3_3.setBounds(369, 195, 116, 20);
+                numRooms.add(spinner_3_3);
+                
+                JSpinner spinner_3_4 = new JSpinner();
+                spinner_3_4.setBounds(546, 141, 116, 20);
+                numRooms.add(spinner_3_4);
+                
+                JSpinner spinner_3_5 = new JSpinner();
+                spinner_3_5.setBounds(546, 167, 116, 20);
+                numRooms.add(spinner_3_5);
+                
+                JComboBox comboBox = new JComboBox();
+                comboBox.setBounds(740, 194, 117, 20);
+                numRooms.add(comboBox);
+                
+                JLabel Headerr11 = new JLabel("No. of Adults:");
+                Headerr11.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
+                Headerr11.setBounds(546, 197, 78, 13);
+                numRooms.add(Headerr11);
 
         // --- Background Image ---
         // Note: Ensure /project_CaseStudy/BG1.jpg exists in your src folder!
