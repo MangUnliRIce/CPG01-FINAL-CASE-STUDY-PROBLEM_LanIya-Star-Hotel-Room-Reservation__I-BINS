@@ -247,20 +247,20 @@ public class LStar_UserExp extends JFrame {
                 lblContactNo.setBounds(270, 402, 105, 13);
                 numRooms.add(lblContactNo);
                 
-                JCheckBox chckbxNewCheckBox = new JCheckBox("New check box");
-                chckbxNewCheckBox.setBackground(new Color(255, 215, 0));
-                chckbxNewCheckBox.setBounds(33, 245, 92, 20);
-                numRooms.add(chckbxNewCheckBox);
+                JCheckBox Addon1 = new JCheckBox("Blanket\r\n");
+                Addon1.setBackground(new Color(255, 215, 0));
+                Addon1.setBounds(33, 245, 92, 20);
+                numRooms.add(Addon1);
                 
-                JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
-                chckbxNewCheckBox_1.setBackground(new Color(255, 215, 0));
-                chckbxNewCheckBox_1.setBounds(33, 280, 92, 20);
-                numRooms.add(chckbxNewCheckBox_1);
+                JCheckBox Addon2 = new JCheckBox("Toilettries");
+                Addon2.setBackground(new Color(255, 215, 0));
+                Addon2.setBounds(33, 280, 92, 20);
+                numRooms.add(Addon2);
                 
-                JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
-                chckbxNewCheckBox_2.setBackground(new Color(255, 215, 0));
-                chckbxNewCheckBox_2.setBounds(33, 315, 92, 20);
-                numRooms.add(chckbxNewCheckBox_2);
+                JCheckBox Addon3 = new JCheckBox("Pillow");
+                Addon3.setBackground(new Color(255, 215, 0));
+                Addon3.setBounds(33, 315, 92, 20);
+                numRooms.add(Addon3);
 
         // --- Background Image ---
         // Note: Ensure /project_CaseStudy/BG1.jpg exists in your src folder!
