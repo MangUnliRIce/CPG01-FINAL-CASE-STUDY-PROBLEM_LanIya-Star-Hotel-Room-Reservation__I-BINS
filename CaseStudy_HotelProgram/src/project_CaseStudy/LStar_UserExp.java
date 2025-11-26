@@ -47,6 +47,10 @@ public class LStar_UserExp extends JFrame {
     private JSpinner CheckinDate;
     private JSpinner CheckoutDate;
     private JTextField textField;
+    private JTextField textField_1;
+    private JTextField textField_2;
+    private JTextField textField_3;
+    private JTextField textField_4;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -60,9 +64,9 @@ public class LStar_UserExp extends JFrame {
     }
 
     public LStar_UserExp() {
+    	setResizable(false);
     	setBackground(new Color(255, 255, 255));
         setTitle("Lanlya Hotel Reservation");
-        setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1024, 720);
 
@@ -199,6 +203,64 @@ public class LStar_UserExp extends JFrame {
                 submitBtn.setBackground(new Color(100, 149, 237));
                 submitBtn.setBounds(10, 470, 970, 20);
                 numRooms.add(submitBtn);
+                
+                JComboBox comboBox = new JComboBox();
+                comboBox.setBounds(583, 61, 147, 20);
+                numRooms.add(comboBox);
+                
+                JComboBox comboBox_1 = new JComboBox();
+                comboBox_1.setBounds(583, 35, 147, 20);
+                numRooms.add(comboBox_1);
+                
+                textField_1 = new JTextField();
+                textField_1.setBounds(95, 399, 147, 18);
+                numRooms.add(textField_1);
+                textField_1.setColumns(10);
+                
+                textField_2 = new JTextField();
+                textField_2.setBounds(95, 427, 147, 18);
+                numRooms.add(textField_2);
+                textField_2.setColumns(10);
+                
+                textField_3 = new JTextField();
+                textField_3.setBounds(338, 399, 147, 18);
+                numRooms.add(textField_3);
+                textField_3.setColumns(10);
+                
+                textField_4 = new JTextField();
+                textField_4.setBounds(338, 427, 147, 18);
+                numRooms.add(textField_4);
+                textField_4.setColumns(10);
+                
+                JLabel lblName = new JLabel("Name:\r\n");
+                lblName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
+                lblName.setBounds(10, 402, 105, 13);
+                numRooms.add(lblName);
+                
+                JLabel lblEmailAddress = new JLabel("Email Address:");
+                lblEmailAddress.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
+                lblEmailAddress.setBounds(10, 427, 105, 13);
+                numRooms.add(lblEmailAddress);
+                
+                JLabel lblContactNo = new JLabel("Contact No.:");
+                lblContactNo.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 10));
+                lblContactNo.setBounds(270, 402, 105, 13);
+                numRooms.add(lblContactNo);
+                
+                JCheckBox chckbxNewCheckBox = new JCheckBox("New check box");
+                chckbxNewCheckBox.setBackground(new Color(255, 215, 0));
+                chckbxNewCheckBox.setBounds(33, 245, 92, 20);
+                numRooms.add(chckbxNewCheckBox);
+                
+                JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
+                chckbxNewCheckBox_1.setBackground(new Color(255, 215, 0));
+                chckbxNewCheckBox_1.setBounds(33, 280, 92, 20);
+                numRooms.add(chckbxNewCheckBox_1);
+                
+                JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
+                chckbxNewCheckBox_2.setBackground(new Color(255, 215, 0));
+                chckbxNewCheckBox_2.setBounds(33, 315, 92, 20);
+                numRooms.add(chckbxNewCheckBox_2);
 
         // --- Background Image ---
         // Note: Ensure /project_CaseStudy/BG1.jpg exists in your src folder!
