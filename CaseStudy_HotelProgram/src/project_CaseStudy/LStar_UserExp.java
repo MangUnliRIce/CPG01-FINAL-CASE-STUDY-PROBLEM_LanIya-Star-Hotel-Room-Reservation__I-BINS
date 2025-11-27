@@ -3,12 +3,9 @@ package project_CaseStudy;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date; // Required for Date logic
 
 public class LStar_UserExp extends JFrame {
@@ -28,7 +25,7 @@ public class LStar_UserExp extends JFrame {
 
     // Data Arrays
     String[] locationDestination = {"Baguio", "Boracay", "El Nido", "Siargao", "Hong Kong", "Japan", "Singapore", "South Korea"};
-    String[] roomTypes = {"Standard", "Deluxe", "Quadruple", "Family", "Suite"};
+    static String[] roomTypes = {"Standard", "Deluxe", "Quadruple", "Family", "Suite"};
     static int[] capacities = {1, 2, 4, 6, 4};
     int[] availableLocal = {5, 4, 5, 3, 2};
     int[] availableIntl = {5, 4, 5, 3, 2};
@@ -103,186 +100,292 @@ public class LStar_UserExp extends JFrame {
         introFrame.setVisible(true);
     }
     
+    // ==========================================
+    //  UPDATED BACKEND (MEETS ALL 14 REQUIREMENTS)
+    // ==========================================
     public static void backEnd() {
-        // =========================================================================
-        // PHASE 1: DATA RETRIEVAL & PARSING
-        // =========================================================================
-        
-        // ... (Same data retrieval as before) ...
+        // --- 1. DATA RETRIEVAL ---
         String bookerName = Fname.getText();
-        // ... [Assume all previous variable retrieval code is here] ...
-        
-        // Quick Re-setup of variables for context (Copy-paste the top part of previous code here)
-        int bookerAge = 0;
-        int numRooms = 0;
-        int adults = 0;
-        int roomChoiceIndex = RoomtypeList.getSelectedIndex();
+        String bookerEmail = Email.getText(); // Req 7
+        String bookerContactNum = contactNum.getText();
         String destination = (String) DestinationList.getSelectedItem();
-        String childAgeStr = childNum.getText().trim();
+        int roomChoiceIndex = RoomtypeList.getSelectedIndex();
         
-        // Add-on inputs
-        int blanketCount = (int) blanketNum.getValue();
-        int pillowCount = (int) pillowNum.getValue();
-        int toiletCount = (int) toiletNum.getValue();
-
-        // Service inputs
-        boolean gymSelected = Service1.isSelected();
-        int gymPersons = (int) gymSpinner1.getValue();
-        int gymPwds = (int) gymSpinner2.getValue();
-        int gymDays = (int) gymSpinner3.getValue();
-
-        boolean poolSelected = Service2.isSelected();
-        int poolPersons = (int) poolSpinner1.getValue();
-        int poolPwds = (int) poolSpinner2.getValue();
-        int poolDays = (int) poolSpinner3.getValue();
-
-        boolean spaSelected = Service3.isSelected();
-        int spaPersons = (int) spaSpinner1.getValue();
-        int spaPwds = (int) spaSpinner2.getValue();
-        int spaSelectionIdx = spaSpinner3.getSelectedIndex();
-
+        // Parse Numbers safely
+        int bookerAge = 0, numRooms = 0, adults = 0;
         try {
             bookerAge = Integer.parseInt(ageField.getText().trim());
             numRooms = Integer.parseInt(roomNum.getText().trim());
             adults = Integer.parseInt(adultNum.getText().trim());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Please enter valid numbers.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        if(bookerAge < 18) {
+        	JOptionPane.showMessageDialog(null, "Invalid Age Not elible to place booking order", null, JOptionPane.ERROR_MESSAGE);
+        	return ;
+        }
+
+        // Amenities Data
+        int gymP = (int) gymSpinner1.getValue();
+        int gymPWD = (int) gymSpinner2.getValue();
+        int gymD = (int) gymSpinner3.getValue();
+        
+        int poolP = (int) poolSpinner1.getValue();
+        int poolPWD = (int) poolSpinner2.getValue();
+        int poolD = (int) poolSpinner3.getValue();
+        
+        int spaP = (int) spaSpinner1.getValue();
+        int spaPWD = (int) spaSpinner2.getValue();
+        int spaIdx = spaSpinner3.getSelectedIndex(); // Spa is 1 day per session usually
 
         // Date Logic
         Date checkInDateObj = (Date) CheckinDate.getValue();
         Date checkOutDateObj = (Date) CheckoutDate.getValue();
         LocalDate checkIn = checkInDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate checkOut = checkOutDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        // =========================================================================
-        // PHASE 2: VALIDATION
-        // =========================================================================
-        // ... (Same validation logic as before) ...
-        if (bookerAge < 18) { JOptionPane.showMessageDialog(null, "Must be 18+"); return; }
-        if (checkIn.isBefore(LocalDate.now()) || !checkOut.isAfter(checkIn)) {
-            JOptionPane.showMessageDialog(null, "Invalid Dates"); return;
-        }
-
-        // =========================================================================
-        // PHASE 3: LOGIC & CALCULATIONS (The Bill)
-        // =========================================================================
-        
-        // 1. Guest Calculation
-        ArrayList<Integer> childAgeList = new ArrayList<>();
-        if (!childAgeStr.isEmpty()) {
-            for (String p : childAgeStr.split(",")) childAgeList.add(Integer.parseInt(p.trim()));
-        }
-        int countChildren8to17 = 0;
-        for (int age : childAgeList) if (age >= 8) countChildren8to17++;
-        int effectiveGuests = adults + countChildren8to17;
-
-        // 2. Capacity Check
-        int capacityPerRoom = capacities[roomChoiceIndex];
-        if (effectiveGuests > (capacityPerRoom * numRooms)) {
-            int response = JOptionPane.showConfirmDialog(null, "Capacity Exceeded. Continue?", "Warning", JOptionPane.YES_NO_OPTION);
-            if (response == JOptionPane.NO_OPTION) return;
-        }
-
-        // 3. Costs
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
-        boolean isInternational = isInternationalDestination(destination);
-        String season = detectSeasonSimple(checkIn);
-        
-        int ratePerRoomPerNight = getRateFor(roomChoiceIndex, season, isInternational);
-        double roomsCost = (double) ratePerRoomPerNight * numRooms * nights;
 
-        int extraGuests = Math.max(0, effectiveGuests - (capacityPerRoom * numRooms));
-        double addonsCost = (extraGuests * ADDON_BED_PER_NIGHT * nights);
-        
-        if (Addon1.isSelected()) addonsCost += blanketCount * ADDON_BLANKET;
-        if (Addon2.isSelected()) addonsCost += pillowCount * ADDON_PILLOW;
-        if (Addon3.isSelected()) addonsCost += toiletCount * ADDON_TOILETRIES;
-
-        double amenitiesCost = 0.0;
-        if (gymSelected) amenitiesCost += calculateAmenityCost(gymPersons, gymPwds, gymDays, GYM_PER_PERSON_PER_DAY);
-        if (poolSelected) amenitiesCost += calculateAmenityCost(poolPersons, poolPwds, poolDays, POOL_PER_PERSON_PER_DAY);
-        if (spaSelected) {
-            int spaRate = (spaSelectionIdx == 0) ? SPA_FOOT : (spaSelectionIdx == 1) ? SPA_AROMA : SPA_THAI;
-            amenitiesCost += calculateAmenityCost(spaPersons, spaPwds, 1, spaRate);
-        }
-
-        double initialTotal = roomsCost + addonsCost + amenitiesCost;
-
-        // =========================================================================
-        // PHASE 4: PAYMENT PROCESSING (NEW SECTION)
-        // =========================================================================
-
-        String[] paymentOptions = {"Cash", "Credit Card"};
-        int paymentChoice = JOptionPane.showOptionDialog(null, 
-                String.format("Total Amount Due: P %.2f\nSelect Payment Method:", initialTotal), 
-                "Payment", 
-                JOptionPane.DEFAULT_OPTION, 
-                JOptionPane.QUESTION_MESSAGE, 
-                null, paymentOptions, paymentOptions[0]);
-
-        double finalAmount = initialTotal;
-        double cashTendered = 0.0;
-        double change = 0.0;
-        String paymentDetails = "";
-        
-        // IF USER CLOSED THE DIALOG (clicked X)
-        if (paymentChoice == -1) return; 
-
-        // --- OPTION 1: CASH ---
-        if (paymentChoice == 0) {
-            boolean validCash = false;
-            while (!validCash) {
-                String input = JOptionPane.showInputDialog(null, String.format("Total: P %.2f\nEnter Cash Amount:", finalAmount));
-                if (input == null) return; // User cancelled
-                
-                try {
-                    cashTendered = Double.parseDouble(input);
-                    if (cashTendered >= finalAmount) {
-                        change = cashTendered - finalAmount;
-                        paymentDetails = String.format("Paid via CASH\nTendered: P %.2f\nChange:   P %.2f", cashTendered, change);
-                        validCash = true;
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Insufficient Amount!", "Payment Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(null, "Invalid currency format.", "Error", JOptionPane.ERROR_MESSAGE);
+        // Calculate Total Guests
+        String childAgeStr = childNum.getText().trim();
+        int childrenCount = 0;
+        if (!childAgeStr.isEmpty()) {
+            try {
+                for (String p : childAgeStr.split(",")) {
+                    if (Integer.parseInt(p.trim()) >= 0) childrenCount++; // Count all children
                 }
-            }
-        } 
-        // --- OPTION 2: CREDIT CARD ---
-        else {
-            // Apply 3% Bank Charge (Standard practice logic)
-            double bankCharge = finalAmount * 0.03; 
-            finalAmount += bankCharge;
-            
-            String cardNum = JOptionPane.showInputDialog(null, 
-                    String.format("3%% Bank Charge Applied (P %.2f).\nNew Total: P %.2f\n\nEnter 16-digit Card Number:", bankCharge, finalAmount));
-            
-            if (cardNum == null || cardNum.length() != 16) {
-                 JOptionPane.showMessageDialog(null, "Invalid Card Number. Transaction Cancelled.", "Error", JOptionPane.ERROR_MESSAGE);
-                 return;
-            }
-            paymentDetails = String.format("Paid via CREDIT CARD\nBank Fee (3%%): P %.2f\nTotal Charged:  P %.2f", bankCharge, finalAmount);
+            } catch (Exception e) {}
+        }
+        int totalGuests = adults + childrenCount; // Simplified for total count logic
+
+        // --- 2. VALIDATION (REQUIREMENTS 3, 4, 6, 7) ---
+
+        // Req 7: Check Email, Name, Contact
+        if (bookerName.isEmpty() || bookerContactNum.isEmpty() || bookerEmail.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Name, Email, and Contact Number are required.", "Req 7 Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        // =========================================================================
-        // PHASE 5: FINAL OUTPUT (RECEIPT)
+        // Req 3 & 4 & 6: Validate Amenities (Guests, Duration, Discounts)
+        // Gym Validation
+        if (gymP > totalGuests) { JOptionPane.showMessageDialog(null, "Gym: Cannot avail for more people than guests.", "Req 3 Error", JOptionPane.ERROR_MESSAGE); return; }
+        if (gymD > nights) { JOptionPane.showMessageDialog(null, "Gym: Cannot avail for more days than stay duration.", "Req 4 Error", JOptionPane.ERROR_MESSAGE); return; }
+        if (gymPWD > gymP) { JOptionPane.showMessageDialog(null, "Gym: PWD discounts cannot exceed number of gym users.", "Req 6 Error", JOptionPane.ERROR_MESSAGE); return; }
+
+        // Pool Validation
+        if (poolP > totalGuests) { JOptionPane.showMessageDialog(null, "Pool: Cannot avail for more people than guests.", "Req 3 Error", JOptionPane.ERROR_MESSAGE); return; }
+        if (poolD > nights) { JOptionPane.showMessageDialog(null, "Pool: Cannot avail for more days than stay duration.", "Req 4 Error", JOptionPane.ERROR_MESSAGE); return; }
+        if (poolPWD > poolP) { JOptionPane.showMessageDialog(null, "Pool: PWD discounts cannot exceed number of pool users.", "Req 6 Error", JOptionPane.ERROR_MESSAGE); return; }
+
+        // Spa Validation
+        if (spaP > totalGuests) { JOptionPane.showMessageDialog(null, "Spa: Cannot avail for more people than guests.", "Req 3 Error", JOptionPane.ERROR_MESSAGE); return; }
+        if (spaPWD > spaP) { JOptionPane.showMessageDialog(null, "Spa: PWD discounts cannot exceed number of spa users.", "Req 6 Error", JOptionPane.ERROR_MESSAGE); return; }
+
+        // --- 3. CALCULATIONS & AUTO-BED (REQUIREMENT 1) ---
+        
+        int capacityPerRoom = capacities[roomChoiceIndex];
+        int totalCapacity = capacityPerRoom * numRooms;
+        
+        // Req 1: Must automatically require availing an extra bed if capacity exceeded
+        int extraGuests = Math.max(0, totalGuests - totalCapacity);
+        double extraBedCost = 0.0;
+        
+        if (extraGuests > 0) {
+            extraBedCost = extraGuests * ADDON_BED_PER_NIGHT * nights;
+            // No confirmation dialog - Automatic application per Req 1
+        }
+
+        // Room Cost
+        boolean isIntl = isInternationalDestination(destination);
+        String season = detectSeasonSimple(checkIn);
+        int roomRate = getRateFor(roomChoiceIndex, season, isIntl);
+        double totalRoomCost = (double) roomRate * numRooms * nights;
+
+        // Add-ons
+        double addonCost = extraBedCost;
+        if (Addon1.isSelected()) addonCost += (int) blanketNum.getValue() * ADDON_BLANKET;
+        if (Addon2.isSelected()) addonCost += (int) toiletNum.getValue() * ADDON_TOILETRIES;
+        if (Addon3.isSelected()) addonCost += (int) pillowNum.getValue() * ADDON_PILLOW;
+
+        // Amenities (Req 5: Discounts only applied here - handled in calculateAmenityCost)
+        double amenityCost = 0.0;
+        if (Service1.isSelected()) amenityCost += calculateAmenityCost(gymP, gymPWD, gymD, GYM_PER_PERSON_PER_DAY);
+        if (Service2.isSelected()) amenityCost += calculateAmenityCost(poolP, poolPWD, poolD, POOL_PER_PERSON_PER_DAY);
+        if (Service3.isSelected()) {
+            int sRate = (spaIdx==0)?SPA_FOOT:(spaIdx==1)?SPA_AROMA:SPA_THAI;
+            amenityCost += calculateAmenityCost(spaP, spaPWD, 1, sRate);
+        }
+
+        double grandTotal = totalRoomCost + addonCost + amenityCost;
+
+        // --- 4. PAYMENT (REQ 8, 9, 10, 12) ---
+        
+        String[] options = {"Cash", "Credit Card"};
+        int choice = JOptionPane.showOptionDialog(null, 
+            String.format("Total: P %.2f\nSelect Payment:", grandTotal), 
+            "Payment", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        
+        if (choice == -1) return;
+
+        String paymentInfo = "";
+
+        if (choice == 0) { // Cash (Req 8)
+            boolean valid = false;
+            while(!valid) {
+                String input = JOptionPane.showInputDialog("Enter Cash Amount (Exact or More):");
+                if (input == null) return;
+                try {
+                    double cash = Double.parseDouble(input);
+                    if (cash >= grandTotal) {
+                        paymentInfo = String.format("Paid Cash: P %.2f\nChange: P %.2f", cash, (cash - grandTotal));
+                        valid = true;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Insufficient cash.");
+                    }
+                } catch(Exception e) { JOptionPane.showMessageDialog(null, "Invalid amount."); }
+            }
+        } else { // Credit Card (Req 9, 10, 12)
+            // Create a custom panel to HIDE the number and ask for CVV
+            JPanel cardPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+            JPasswordField cardField = new JPasswordField(16); // Req 12: Hidden
+            JPasswordField cvvField = new JPasswordField(3);   // Req 9: CVV
+            
+            cardPanel.add(new JLabel("Card Number (16 digits):"));
+            cardPanel.add(cardField);
+            cardPanel.add(new JLabel("CVV (3 digits):"));
+            cardPanel.add(cvvField);
+
+            int result = JOptionPane.showConfirmDialog(null, cardPanel, "Enter Card Details", JOptionPane.OK_CANCEL_OPTION);
+            if (result != JOptionPane.OK_OPTION) return;
+
+            String cardNumStr = new String(cardField.getPassword());
+            String cvvStr = new String(cvvField.getPassword());
+
+            // Simple Length Check
+            if (cardNumStr.length() != 16 || cvvStr.length() != 3) {
+                JOptionPane.showMessageDialog(null, "Invalid Card Details! Must be 16 digits + 3 digit CVV.");
+                return;
+            }
+            
+            // Req 10: Display exact amount deducted
+            paymentInfo = String.format("Credit Card Deducted: P %.2f\n(Card Ending in %s)", grandTotal, cardNumStr.substring(12));
+        }
+
+     // =========================================================================
+        // PHASE 5: FINAL OUTPUT (DETAILED RECEIPT)
         // =========================================================================
         
         StringBuilder receipt = new StringBuilder();
-        receipt.append("--- OFFICIAL RECEIPT ---\n");
-        receipt.append("Guest: ").append(bookerName).append("\n");
-        receipt.append("Destination: ").append(destination).append("\n");
-        receipt.append("----------------------------\n");
-        receipt.append(String.format("Subtotal:       P %.2f\n", initialTotal));
-        receipt.append("----------------------------\n");
-        receipt.append(paymentDetails).append("\n");
-        receipt.append("----------------------------\n");
-        receipt.append("Thank you for booking!");
+        receipt.append("--------------------------------------------\n");
+        receipt.append("         LANLYA HOTEL OFFICIAL RECEIPT      \n");
+        receipt.append("--------------------------------------------\n\n");
 
-        JOptionPane.showMessageDialog(null, receipt.toString(), "Booking Confirmed", JOptionPane.INFORMATION_MESSAGE);
+        // 1. GUEST & STAY DETAILS
+        receipt.append("GUEST DETAILS:\n");
+        receipt.append(" Name: ").append(bookerName).append("\n");
+        receipt.append(" Email: ").append(bookerEmail).append("\n");
+        receipt.append(" Contact: ").append(bookerContactNum).append("\n");
+        receipt.append(" Destination: ").append(destination).append(" (").append(isIntl ? "International" : "Local").append(")\n");
+        receipt.append(" Stay: ").append(checkIn).append(" to ").append(checkOut).append(" (").append(nights).append(" nights)\n");
+        receipt.append("\n");
+
+        // 2. ACCOMMODATION CHARGES
+        receipt.append("ACCOMMODATION:\n");
+        receipt.append(String.format(" • %s Room (x%d) @ %s Rate\n", roomTypes[roomChoiceIndex], numRooms, season));
+        receipt.append(String.format("    Price: P %.2f\n", totalRoomCost));
+        
+        if (extraGuests > 0) {
+            receipt.append(String.format(" • Extra Bed Charge (%d pax): P %.2f\n", extraGuests, extraBedCost));
+        }
+        receipt.append("\n");
+
+        // 3. ADD-ONS BREAKDOWN (Only show if selected)
+        if (Addon1.isSelected() || Addon2.isSelected() || Addon3.isSelected()) {
+            receipt.append("ADD-ONS:\n");
+            if (Addon1.isSelected()) {
+                int qty = (int) blanketNum.getValue();
+                receipt.append(String.format(" • Blankets (x%d): P %d\n", qty, qty * ADDON_BLANKET));
+            }
+            if (Addon2.isSelected()) {
+                int qty = (int) toiletNum.getValue();
+                receipt.append(String.format(" • Toiletries (x%d): P %d\n", qty, qty * ADDON_TOILETRIES));
+            }
+            if (Addon3.isSelected()) {
+                int qty = (int) pillowNum.getValue();
+                receipt.append(String.format(" • Pillows (x%d): P %d\n", qty, qty * ADDON_PILLOW));
+            }
+            receipt.append("\n");
+        }
+
+        // 4. AMENITIES BREAKDOWN (Only show if selected)
+        if (Service1.isSelected() || Service2.isSelected() || Service3.isSelected()) {
+            receipt.append("AMENITIES (PWD Discounts Applied):\n");
+            
+            if (Service1.isSelected()) {
+                double cost = calculateAmenityCost(gymP, gymPWD, gymD, GYM_PER_PERSON_PER_DAY);
+                receipt.append(String.format(" • Gym (%d pax, %d days): P %.2f\n", gymP, gymD, cost));
+            }
+            if (Service2.isSelected()) {
+                double cost = calculateAmenityCost(poolP, poolPWD, poolD, POOL_PER_PERSON_PER_DAY);
+                receipt.append(String.format(" • Pool (%d pax, %d days): P %.2f\n", poolP, poolD, cost));
+            }
+            if (Service3.isSelected()) {
+                int sRate = (spaIdx == 0) ? SPA_FOOT : (spaIdx == 1) ? SPA_AROMA : SPA_THAI;
+                double cost = calculateAmenityCost(spaP, spaPWD, 1, sRate);
+                receipt.append(String.format(" • Spa (%d pax): P %.2f\n", spaP, cost));
+            }
+            receipt.append("\n");
+        }
+
+        // 5. TOTALS AND PAYMENT
+        receipt.append("--------------------------------------------\n");
+        receipt.append(String.format(" GRAND TOTAL: P %.2f\n", grandTotal));
+        receipt.append("--------------------------------------------\n");
+        receipt.append("PAYMENT DETAILS:\n");
+        receipt.append(paymentInfo).append("\n");
+        receipt.append("--------------------------------------------\n");
+        receipt.append("      Thank you for choosing Lanlya!        ");
+
+        // Display the detailed receipt
+        JTextArea textArea = new JTextArea(receipt.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 12)); // Monospace font aligns text nicely
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(400, 500));
+        
+        JOptionPane.showMessageDialog(null, scrollPane, "Booking Confirmed", JOptionPane.INFORMATION_MESSAGE);
+
+        // --- 6. LOOPING (REQ 13, 14) ---
+        int again = JOptionPane.showConfirmDialog(null, "Would you like to book another stay?", "Book Again?", JOptionPane.YES_NO_OPTION);
+        if (again == JOptionPane.YES_OPTION) {
+            resetForm(); // Req 14: Loop/Reset
+        } else {
+            System.exit(0);
+        }
+    }
+
+    // Helper Method to Reset the Form (Req 14)
+    public static void resetForm() {
+        Fname.setText("");
+        Email.setText("");
+        contactNum.setText("");
+        ageField.setText("");
+        adultNum.setText("1");
+        childNum.setText("1");
+        roomNum.setText("1");
+        DestinationList.setSelectedIndex(0);
+        RoomtypeList.setSelectedIndex(0);
+        
+        // Reset Checkboxes
+        Addon1.setSelected(false); Addon2.setSelected(false); Addon3.setSelected(false);
+        Service1.setSelected(false); Service2.setSelected(false); Service3.setSelected(false);
+        
+        // Reset Spinners to 0
+        blanketNum.setValue(0); pillowNum.setValue(0); toiletNum.setValue(0);
+        gymSpinner1.setValue(0); gymSpinner2.setValue(0); gymSpinner3.setValue(0);
+        poolSpinner1.setValue(0); poolSpinner2.setValue(0); poolSpinner3.setValue(0);
+        spaSpinner1.setValue(0); spaSpinner2.setValue(0);
     }
     
     //Boolean to check 
